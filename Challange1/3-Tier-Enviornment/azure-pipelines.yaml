@@ -1,0 +1,23 @@
+parameters:
+  - name: deploy_to_dev
+    type: boolean
+    default: true
+    displayName: "Deploy to DEV?"
+
+trigger:
+  branches:
+    exclude:
+      - master
+      - test*
+    include:
+      - "main"
+stages:
+  - stage: Build
+    jobs:
+      - template: pipeline/jobs/build.yaml
+
+
+  - stage: Deploy
+    jobs:
+      - template: pipeline/jobs/deploy.yaml
+ 
