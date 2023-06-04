@@ -1,0 +1,73 @@
+parameters:
+  - name: stage
+    type: string
+    default: ""  
+
+jobs:  
+  - deployment: Deploy_${{ parameters.stage }}_${{ environment }}
+    timeoutInMinutes: 360
+    condition: or(or(eq('${{ parameters.stage }}', 'd') , eq('${{ parameters.stage }}', 't')), and(eq('${{ parameters.stage }}', 'a'), succeeded('Manual_Approval_${{ environment }}')), and(eq('${{ parameters.stage }}', 'p'), succeeded('Manual_Approval_${{ environment }}'), eq(variables['build.sourceBranch'],  'refs/heads/master')))
+    displayName: "Deploy the Resources"
+    pool:
+      name: CDaaSWin
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureResourceManagerTemplateDeployment@3
+              inputs:
+                deploymentScope: 'KPMGRG'
+                azureResourceManagerConnection: 'copy-connection'
+                subscriptionId: '00000000-0000-0000-0000-000000000000'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: 'demogroup'
+                location: 'East US 2'
+                templateLocation: 'Linked Artifact'
+                csmFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.json$(AzureFileCopy.StorageContainerSasToken)'
+                csmParametersFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.parameters.json$(AzureFileCopy.StorageContainerSasToken)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'Create Resource Group'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              inputs:
+                deploymentScope: 'KPMGRG'
+                azureResourceManagerConnection: 'copy-connection'
+                subscriptionId: '00000000-0000-0000-0000-000000000000'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: 'demogroup'
+                location: 'East US 2'
+                templateLocation: 'Linked Artifact'
+                csmFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.json$(AzureFileCopy.StorageContainerSasToken)'
+                csmParametersFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.parameters.json$(AzureFileCopy.StorageContainerSasToken)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'Create Web VM'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              inputs:
+                deploymentScope: 'KPMGRG'
+                azureResourceManagerConnection: 'copy-connection'
+                subscriptionId: '00000000-0000-0000-0000-000000000000'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: 'demogroup'
+                location: 'East US 2'
+                templateLocation: 'Linked Artifact'
+                csmFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.json$(AzureFileCopy.StorageContainerSasToken)'
+                csmParametersFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.parameters.json$(AzureFileCopy.StorageContainerSasToken)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'Create APP VM'
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              inputs:
+                deploymentScope: 'KPMGRG'
+                azureResourceManagerConnection: 'copy-connection'
+                subscriptionId: '00000000-0000-0000-0000-000000000000'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: 'demogroup'
+                location: 'East US 2'
+                templateLocation: 'Linked Artifact'
+                csmFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.json$(AzureFileCopy.StorageContainerSasToken)'
+                csmParametersFileLink: '$(AzureFileCopy.StorageContainerUri)templates/mainTemplate.parameters.json$(AzureFileCopy.StorageContainerSasToken)'
+                deploymentMode: 'Incremental'
+                deploymentName: 'Create DB Server'
+
+

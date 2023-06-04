@@ -17,7 +17,12 @@ stages:
       - template: pipeline/jobs/build.yaml
 
 
-  - stage: Deploy
-    jobs:
-      - template: pipeline/jobs/deploy.yaml
+  - ${{ if eq(parameters.deploy_to_dev, true) }}:
+    - stage: DEV
+      condition: succeeded('Build')
+      jobs:
+        - template: pipeline/jobs/deploy.yml
+          parameters:
+            stage: 'd'
+          
  
