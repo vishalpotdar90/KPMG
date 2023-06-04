@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
@@ -9,16 +9,16 @@ namespace NestedObject
     {
         static void Main(string[] args)
         {
-            static object GetNestedObject(JObject obj, string key)
+            static object GetNestedObject(JObject obj, string searchkey)
             {
-                var keys = key.Split('/');
-                JToken current = obj;
+                var keys = searchkey.Split('/');
+                JToken currentobj = obj;
                 foreach (var k in keys)
                 {
-                    current = current[k];
-                    if (current == null) return "Key {key} not exists";
+                    currentobj = currentobj[k];
+                    if (currentobj == null) return "Key {searchkey} not exists";
                 }
-                return current;
+                return currentobj;
             }
             /*Tests*/
             JObject obj = JObject.Parse("{\"a\":{\"b\":{\"c\":\"d\"}}}");
